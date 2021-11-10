@@ -28,6 +28,8 @@ A collection of commands that can be used to give an overview / monitor resource
 
 ### 2. CPU/GPU/Memory commands
 
+[this section is empty]
+
 ### 3. filtering with `| grep`
 `ls [optional_dir_path]` / `la` / `ll` / `ls -al`  (list files and folders in a directory).  
 combine with pipe and grep to filter the output:  
