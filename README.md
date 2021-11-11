@@ -27,8 +27,29 @@ A collection of commands that can be used to give an overview / monitor resource
 **_~~Windows - (not yet covered)~~_**
 
 ### 2. CPU/GPU/Memory commands
+Note: if your computer has more than one core, the total %CPU possible is 100% * number of cores. (e.g. quad-core = 400%).  
 
-[this section is empty]
+#### (i) Broad view
+`ps u -A`  (but `ps ux -A` shows more detail)  
+- u gives user level usage stats eg cpu and mem 
+- -A gives process status for all users, not just the current one
+
+#### (ii) Tracking activity  
+`top` / `top -U George` (user) / `top -u` (ordered by %cpu)  
+- Available fields/"keys": `-o <and key>` pid (default), command, cpu, cpu_me, cpu_others, csw, time, threads, ports, mregion, mem, rprvt, purg, vsize, vprvt, kprvt, kshrd, pgrp, ppid, state, uid, wq, faults, cow, user, msgsent, msgrecv, sysbsd, sysmach, pageins, boosts, instrs, cycles.
+- Can use `-l` and `-i` to choose the samples and interval (eg 6 samples over 1 minute would take a reading every 10 seconds for a minute?)
+- Other tags: 
+ - [-a | -d | -e | -c <mode>] 
+ - [-F | -f] 
+ - [-ncols <columns>][-R | -r]
+ - [-S]
+ - [-s <delay>]
+ - [-n <nprocs>]
+ - [-stats <key(s)>]
+ - [-pid <processid>]
+ - [-user <username>]
+ - [-U <username>]
+ - [-u]
 
 ### 3. filtering with `| grep`
 `ls [optional_dir_path]` / `la` / `ll` / `ls -al`  (list files and folders in a directory).  
@@ -56,8 +77,14 @@ eg echo \`pwd\` will give the output of pwd command (as `echo pwd` just prints "
 > * sed works on lines (modifies words or other parts of lines, or inserts or deletes lines).
 > * awk work on records with fields (by default whitespace separated fields on a line, but this may be changed by setting FS and RS).
 
-So sed could be used here. Also awk might be used on a table output. eg `ls -l` / `ll` to sort or filter on a certain field in the table?? eg date??
+So sed could be used here. Also awk might be used on a table output. eg `ls -l` / `ll` to sort or filter on a certain field in the table?? eg date??  
 
+### 4. Docker 
+if not using systemctl `service docker status`
+if using systemcl `systemctl is-active docker`
+
+ 
+ 
 ## TO DO:
 - Single run stuff/basic functionality
   - add CPU/Memory function
@@ -80,5 +107,6 @@ So sed could be used here. Also awk might be used on a table output. eg `ls -l` 
   - set up alert for strange/unusual activity
   - Identify/call-out problem processes that are causing the issues (eg specific dags)
 
+ 
 # Author
 George Goldberg (ggoldberg.inbox@gmail.com) 2021
