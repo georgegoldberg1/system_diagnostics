@@ -100,18 +100,23 @@ So sed could be used here. Also awk might be used on a table output. eg `ls -l` 
 **Check Docker status**  
 - not using systemctl: `service docker status`  
 - using systemctl: `systemctl is-active docker`  
+ 
 **Check Docker Setup**  
 - INFO: `docker info`  
  - (eg. `docker info | grep 'Total Memory'` to show memory allocated (for airflow it should be at least 8GB)  
  - (eg2: `docker info | grep 'Containers:\|Running:\|Paused:\|Stopped:\|Images:'`)  
 - UPDATE CONFIG on one or more containers `docker update ????`   
+ 
 **Check container ports**  
 - `docker port <container name/id>`  
-- INSPECT: `docker inspect <container name/id> | grep Port` 
+- INSPECT: `docker inspect <container name/id> | grep Port`  
+ 
 **Check container history**  
 - LOGS: `docker logs <container name/id>`  
+ 
 **Monitor docker overall**  
 - REALTIME events: `docker events`  
+ 
 **Monitor containers**
 - cpu/mem use, STATS: `docker stats <container name/id>`  
 - External process monitor: `docker top <container name/id>`  
