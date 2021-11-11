@@ -142,6 +142,8 @@ to start and go into a container `docker run -it --rm ubuntu:latest /bin/bash`
 - Advanced stuff
   - add support for docker containers/processes inside/ etc
   - add support for airflow containers/workers/processes/dagruns inside /db connection/port monitoring etc
+  - Database monitoring/ DB health
+  - AWS monitoring/health/capacity/utilisation / efficiency + cost 
   - automate email daily from gsheets
   - set up alert for strange/unusual activity
   - Identify/call-out problem processes that are causing the issues (eg specific dags)
