@@ -13,16 +13,19 @@ A collection of commands that can be used to give an overview / monitor resource
 (`du` = "Disk Usage" command, `-h` "human readable size values", `-d/--max-depth` "number of folders below current dir to get size of, `.` = optional!, if you want to specify the path to the folder)
 
 **Mac OS**  
-
+get mac os version:  
+`sw_vers`  
+get disk usage:  
 `du -hd1 . | sort -hro results_from_du.txt`  
 - r=reversed (/descending size order here)
 - h=human-readable numbers (e.g. put "1.6G" above "2.5M", otherwise it treats them as strings. or see solution in pandas (here)[https://stackoverflow.com/questions/39684548/convert-the-string-2-90k-to-2900-or-5-2m-to-5200000-in-pandas-dataframe])
-- o= output (must be followed by filename)
-
+- o= output (must be followed by filename)  
 
 **Linux (Ubuntu/Debian etc)**  
-
-`du . -h -d=1 | sort -hro results_from_du.txt` 
+get linux version:  
+`cat /etc/os-release | grep 'HOME_URL\|VERSION=\|ID_LIKE=\|VERSION_CODENAME'`  
+get disk usage:  
+`du . -h -d=1 | sort -hro results_from_du.txt`  
 
 **_~~Windows - (not yet covered)~~_**
 
@@ -35,11 +38,14 @@ Note: if your computer has more than one core, the total %CPU possible is 100% *
 - -A gives process status for all users, not just the current one
 
 #### (ii) Tracking activity  
+**MAC OS TOP**  
 `top` / `top -U George` (user) / `top -u` (ordered by %cpu)  
-- Available fields/"keys": `-o <and key>` pid (default), command, cpu, cpu_me, cpu_others, csw, time, threads, ports, mregion, mem, rprvt, purg, vsize, vprvt, kprvt, kshrd, pgrp, ppid, state, uid, wq, faults, cow, user, msgsent, msgrecv, sysbsd, sysmach, pageins, boosts, instrs, cycles.
-- Can use `-l` and `-i` to choose the samples and interval (eg 6 samples over 1 minute would take a reading every 10 seconds for a minute?)
+- Available fields/"keys": `-o <key>` pid (default), command, cpu, cpu_me, cpu_others, csw, time, threads, ports, mregion, mem, rprvt, purg, vsize, vprvt, kprvt, kshrd, pgrp, ppid, state, uid, wq, faults, cow, user, msgsent, msgrecv, sysbsd, sysmach, pageins, boosts, instrs, cycles.
+- Intervals (refreshes): `-i <num>`
+- 
+- Can use `-l` (logging mode num samples) and `-i` to choose the samples and interval (eg 6 samples over 1 minute would take a reading every 10 seconds for a minute?)
 - Other tags: 
- - [-a | -d | -e | -c <mode>] 
+ - [-a (accumulative over period) | -d (delta/change vs prev sample) | -e (absolute at start time)| -c <mode>] 
  - [-F | -f] 
  - [-ncols <columns>][-R | -r]
  - [-S]
@@ -49,8 +55,19 @@ Note: if your computer has more than one core, the total %CPU possible is 100% *
  - [-pid <processid>]
  - [-user <username>]
  - [-U <username>]
- - [-u]
-
+ - [-u]  
+ 
+ **LINUX TOP**  
+ ```
+  top -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]
+ ```  
+ delay -d = time between refreshes
+max samples -n = 
+ 
+**OR USE DOCKER**  
+`docker top <container name/id>`  
+ 
+ 
 ### 3. filtering with `| grep`
 `ls [optional_dir_path]` / `la` / `ll` / `ls -al`  (list files and folders in a directory).  
 combine with pipe and grep to filter the output:  
@@ -79,11 +96,28 @@ eg echo \`pwd\` will give the output of pwd command (as `echo pwd` just prints "
 
 So sed could be used here. Also awk might be used on a table output. eg `ls -l` / `ll` to sort or filter on a certain field in the table?? eg date??  
 
-### 4. Docker 
-if not using systemctl `service docker status`
-if using systemcl `systemctl is-active docker`
+### 4. Docker  
+**Check Docker status**  
+- not using systemctl: `service docker status`  
+- using systemctl: `systemctl is-active docker`  
+**Check Docker Setup**  
+- INFO: `docker info`  
+ - (eg. `docker info | grep 'Total Memory'` to show memory allocated (for airflow it should be at least 8GB)  
+ - (eg2: `docker info | grep 'Containers:\|Running:\|Paused:\|Stopped:\|Images:'`)  
+- UPDATE CONFIG on one or more containers `docker update ????`   
+**Check container ports**  
+- `docker port <container name/id>`  
+- INSPECT: `docker inspect <container name/id> | grep Port` 
+**Check container history**  
+- LOGS: `docker logs <container name/id>`  
+**Monitor docker overall**  
+- REALTIME events: `docker events`  
+**Monitor containers**
+- cpu/mem use, STATS: `docker stats <container name/id>`  
+- External process monitor: `docker top <container name/id>`  
+- Internal process monitor (from inside the container): `ps -elf`  / `top`
+to start and go into a container `docker run -it --rm ubuntu:latest /bin/bash`  
 
- 
  
 ## TO DO:
 - Single run stuff/basic functionality
