@@ -43,4 +43,11 @@ Now set up the colour theme, highlighting and plugins that will make life in the
 4. Set ZSH_THEME in .zshrc config file to the new theme:  `sed -i 's/^ZSH_THEME=/ZSH_THEME="powerlevel10k\/powerlevel10k" #default ZSH_THEME=/g' ~/.zshrc`
 5. Set the plugins:  `sed -i 's/^plugins/plugins=(git aws compleat systemadmin) #default plugins/g' ~/.zshrc`
 
-TO DO : syntax highlighting https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md // autosuggestions
+TO DO : 
+- zsh syntax highlighting https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md 
+- // zsh autosuggestions
+- installing docker + rootless/best practice
+- cronjob on docker and processes etc
+- postgres with docker + health checks
+- airflow+ celery checks etc + UI up and down + memory allocation
+
