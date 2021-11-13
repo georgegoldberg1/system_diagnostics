@@ -41,11 +41,10 @@ Now set up the colour theme, highlighting and plugins that will make life in the
 2. On your machine (not the VM), install the [powerline](https://github.com/powerline/fonts) fonts + set up your terminal to use one of the "Meslo" fonts.
 3. Install [powerline10k](https://github.com/romkatv/powerlevel10k#oh-my-zsh) theme:  `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k`
 4. Set ZSH_THEME in .zshrc config file to the new theme:  `sed -i 's/^ZSH_THEME=/ZSH_THEME="powerlevel10k\/powerlevel10k" #default ZSH_THEME=/g' ~/.zshrc`
-5. Set the plugins:  `sed -i 's/^plugins/plugins=(git aws compleat systemadmin) #default plugins/g' ~/.zshrc`
+5. Download custom [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md) AND [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md) plugins:  `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting` and `git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions`
+6. Set all the plugins:  `sed -i 's/^plugins/plugins=(git aws compleat systemadmin zsh-autosuggestions zsh-syntax-highlighting) #default plugins/1' ~/.zshrc`
 
 TO DO : 
-- zsh syntax highlighting https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md 
-- // zsh autosuggestions
 - installing docker + rootless/best practice
 - cronjob on docker and processes etc
 - postgres with docker + health checks
