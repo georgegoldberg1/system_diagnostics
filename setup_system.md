@@ -54,3 +54,5 @@ TO DO :
 - airflow+ celery checks etc + UI up and down + memory allocation
 - Let new users use the same .zshrc set up and plugins etc
 
+# Contact
+George Goldberg (ggoldberg.inbox@gmail.com) (2021)
