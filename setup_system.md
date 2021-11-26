@@ -55,4 +55,4 @@ TO DO :
 - Let new users use the same .zshrc set up and plugins etc
 
 # Contact
-George Goldberg (ggoldberg.inbox@gmail.com) (2021)
+George Goldberg (2021)
