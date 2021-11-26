@@ -139,4 +139,4 @@ Use combination of `pwd` (print working directory) to get get full path, then `t
   - Identify/call-out problem processes that are causing the issues (eg specific dags)
  
 # Author
-George Goldberg (ggoldberg.inbox@gmail.com) 2021
+George Goldberg (2021)
