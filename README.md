@@ -1,142 +1,69 @@
-# system_diagnostics
-A collection of commands that can be used to give an overview / monitor resources used and the health of your computer/server.
+# Outlines the steps needed to set up an ubuntu machine (/ VM in virtualbox)
 
-- storage commands (these may vary depending what you are doing - eg docker volumes may be inaccessible to "du" command?)
-- cpu/gpu/memory commands  
-- filtering using `| grep` or other lower level subprocess cpu or sub folder disk use (eg application level/user level/airflow worker level) 
-- outputs file/clipboard copypaste
-- ssh file transfer to local / s3
-- automation of process - cronjob? (as super low resource requirement + low complexity but operates close to the base machne (vs docker/airflow etc which may "go down")  
+Download Ubuntu .iso file and move it to a known location
+Create virtual box VM with at least 1GB memory (or better: 1/4 of the total host machine RAM)
+Note: to host AIRFLOW on Ubuntu, you need to set at least 8GB of RAM.
+Use dynamic storage (set maximum at least 10GB)
+In settings, on storage tab, change the Controller IDE, adding the .iso file from the folder it's stored.
+Start the VM and create admin user. open the terminal.
 
-Some commands depend on your operating system. Currently no commands are here for windows. To find out your system details on linux or mac, see below:  
-get mac os version:  
-`sw_vers` and processor details `sysctl -a | grep brand` / `system_profiler | grep Processor`  
-get linux version:  
-`cat /etc/os-release | grep 'HOME_URL\|VERSION=\|ID_LIKE=\|VERSION_CODENAME'`  
+Update package lists, then upgrade any packages that need it:  
+`sudo apt update`  
+`sudo apt list --upgradable`  
+`sudo apt upgrade`
 
-### 1. Get Disk Usage Stats
-[du shell command](https://explainshell.com/explain?cmd=du+-m+--max-depth%3D1+--exclude+media+%7C+sort+-n)  
-(`du` = "Disk Usage" command, `-h` "human readable size values", `-d/--max-depth` "number of folders below current dir to get size of, `.` = optional!, if you want to specify the path to the folder)
+Install zsh improved shell for terminal, this will close the terminal:  
+`sudo apt install zsh && chsh -s $(which zsh) && exit` 
 
-**Mac OS**  
-get disk usage:  
-`du -hd1 . | sort -hro results_from_du.txt`  
-- r=reversed (/descending size order here)
-- h=human-readable numbers (e.g. put "1.6G" above "2.5M", otherwise it treats them as strings. or see solution in pandas [here](https://stackoverflow.com/questions/39684548/convert-the-string-2-90k-to-2900-or-5-2m-to-5200000-in-pandas-dataframe))
-- o= output (must be followed by filename)  
+From a new terminal, install a few more packages needed for repository connection, cloud services, and terminal file editing:  
+`sudo apt install git-all, awscli, vim`
 
-**Linux (Ubuntu/Debian etc)**  
-get disk usage:  
-`du . -h -d=1 | sort -hro results_from_du.txt`  
+Set Up SSH, so you can connect to this VM from your local machines command line:  
+- Install SSH server on the VM: `sudo apt update && sudo apt install openssh-server`
+- Get the VMs IP address: `hostname -I`
+- Enable SSH from VirtualBox: Right-click on the VM, settings, networking tab, adv settings, port forwarding, fill out: SSH TCP 2200 <vm_ip_address_here eg 10.0.2.15> 22
+- Test the SSH connection: from your local/host machine: `ssh -p 2200 <yourusername>@localhost`
 
-**_~~Windows - (not yet covered)~~_**
+Now you can shutdown the VM, and restart it as "headless" (no UI), because you will connect from the terminal via ssh from now on.
 
-### 2. Get CPU/GPU/Memory Stats (overall machine)
-Note: if your computer has more than one core, the total %CPU possible is 100% * number of cores. (e.g. quad-core = 400%).  
+Create a shortcut for the ssh connection:
+1. Add the connection to your ssh config file: `vi ~/.ssh/config` then type:
+```
+Host vm_ubuntu
+  HostName localhost
+  Port 2200
+  User <yourusername> eg george
+```
+2. Close the file with `:wq` then close the terminal windown and open a new one.
+3. Test the new alias, connecting using: `ssh vm_ubuntu`
 
-#### (i) Snapshot of processes (PS command)
-`ps u -A`  (but `ps ux -A` shows more detail)  
-- u gives user level usage stats eg cpu and mem 
-- -A gives process status for all users, not just the current one
+Now set up the colour theme, highlighting and plugins that will make life in the terminal far easier:
+1. Inside the VM, install "oh-my-zsh" following [steps](https://github.com/ohmyzsh/ohmyzsh) on GitHub:  
+`sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`  
+2. On your machine (not the VM), install the [powerline](https://github.com/powerline/fonts) fonts + set up your terminal to use one of the "Meslo" fonts.
+3. Install [powerline10k](https://github.com/romkatv/powerlevel10k#oh-my-zsh) theme:  `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k`
+4. Set ZSH_THEME in .zshrc config file to the new theme:  `sed -i 's/^ZSH_THEME=/ZSH_THEME="powerlevel10k\/powerlevel10k" #default ZSH_THEME=/g' ~/.zshrc`
+5. Download custom visual plugins: [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md) (makes text bold red when not understood, or green if found in commands list) AND [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md) (highlights suggested command completion to help you in the terminal):  `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting` and `git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions`
+6. Set all the plugins:  `sed -i 's/^plugins/plugins=(git aws compleat systemadmin zsh-autosuggestions zsh-syntax-highlighting) #default plugins/1' ~/.zshrc`
+7. Set colours of zsh-autosuggestions to make them stand out:  `echo ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=fg=#ffffff,bg=cyan,bold,underline >> ~/.zshrc`  
+8. Close the terminal connection and restart the VM to make sure these changes are all working. Note: the above will set up .zshrc file for the main user, but not any other users. this Needs to be sorted out still.
 
-#### (ii) Ongoing / more accurate tracking processes + activity (TOP command)
-**MAC OS TOP**  
-`top` / `top -U George` (user) / `top -u` (ordered by %cpu)  
-- Available fields/"keys": `-o <key>` pid (default), command, cpu, cpu_me, cpu_others, csw, time, threads, ports, mregion, mem, rprvt, purg, vsize, vprvt, kprvt, kshrd, pgrp, ppid, state, uid, wq, faults, cow, user, msgsent, msgrecv, sysbsd, sysmach, pageins, boosts, instrs, cycles.
-- Intervals (refreshes): `-i <num>`
-- 
-- Can use `-l` (logging mode num samples) and `-i` to choose the samples and interval (eg 6 samples over 1 minute would take a reading every 10 seconds for a minute?)
-- Other tags: 
- - [-a (accumulative over period) | -d (delta/change vs prev sample) | -e (absolute at start time)| -c <mode>] 
- - [-F | -f] 
- - [-ncols <columns>][-R | -r]
- - [-S]
- - [-s <delay>]
- - [-n <nprocs>]
- - [-stats <key(s)>]
- - [-pid <processid>]
- - [-user <username>]
- - [-U <username>]
- - [-u]  
- 
- ```cpu_percent=$(top -l  2 | grep -E "^CPU" | tail -1 | awk '{ print $3 + $5"%" }')```
- 
- **LINUX TOP** ([see guide](https://manpages.ubuntu.com/manpages/xenial/man1/top.1.html))  
- ```
-  top -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]
- ```  
-(delay -d, samples -n, )
-- `-o +'%CPU'` (sort dec on cpu use. swap + with - to change sort direction)
-- 
- 
-> [source](https://unix.stackexchange.com/questions/13968/show-top-five-cpu-consuming-processes-with-ps)  Why use ps when you can do it easily with the top command?
-> If you must use ps, try this:
-> `ps aux | sort -nrk 3,3 | head -n 5`
-> If you want something that's truly 'top'esq with constant updates, use watch
-> `watch "ps aux | sort -nrk 3,3 | head -n 5"`
->
->The correct answer is: `ps --sort=-pcpu | head -n 6`, So you can specify columns without interfering with sorting.
->(eg `ps -Ao user,uid,comm,pid,pcpu,tty --sort=-pcpu | head -n 6` )
-> Note In Mac OS X, ps doesn't recognize --sort, but offers -r to sort by current CPU usage. Thus, for Mac OS X you can use: `ps -Ao user,uid,comm,pid,pcpu,tty -r | head -n 6`  
- 
-**OR USE DOCKER**  
-`docker top <container name/id>`  
+## Adding Vim (update to latest version)
+_(Follow instructions here: https://www.vim.org/git.php)_ 
 
-### 3. Docker  (containerised processes on the machine)
-**Check Docker status**  
-- not using systemctl: `service docker status`  
-- using systemctl: `systemctl is-active docker`  
- 
-**Check Docker Setup**  
-- INFO: `docker info`  
- - (eg. `docker info | grep 'Total Memory'` to show memory allocated (for airflow it should be at least 8GB)  
- - (eg2: `docker info | grep 'Containers:\|Running:\|Paused:\|Stopped:\|Images:'`)  
-- UPDATE CONFIG on one or more containers `docker update ????`   
- 
-**Check container ports**  
-- `docker port <container name/id>`  
-- INSPECT: `docker inspect <container name/id> | grep Port`  
- 
-**Check container history**  
-- LOGS: `docker logs <container name/id>`  
- 
-**Monitor docker overall**  
-- REALTIME events: `docker events`  
- 
-**Monitor containers**
-- cpu/mem use, STATS: `docker stats <container name/id>`  
-- External process monitor: `docker top <container name/id>`  
-- Internal process monitor (from inside the container): `ps -elf`  / `top`
-to start and go into a container `docker run -it --rm ubuntu:latest /bin/bash`  
+Clone and pull latest:
+- ``git clone https://github.com/vim/vim.git``  
+- ``cd vim && git pull``  
+- ``cd src`` then ``make`` (``make distclean`` before ``make`` will work in future builds)
+- ``sudo make install``
 
-### 4. Storing output files + automated file naming
-You ideally want the name of the output file to reflect the location you checked, otherwise it will be listed as "." (relative to where the command ran), which is not helpful if you run the `du` command in multiple different locations and consolidate these files later.  
 
-Use combination of `pwd` (print working directory) to get get full path, then `tr` / `sed` / `awk` / `grep` commands to extract the current folder location from the pwd string. [stack exchange seg/awk/tr overview](https://unix.stackexchange.com/questions/427940/main-difference-between-tr-translate-to-sed-and-awk)) Note: surround `pwd` with backticks/backquotes ("\`"s) to use pwd in another command (eg echo \`pwd\` will give the output of pwd command, as `echo pwd` just prints "pwd")
- 
-## TO DO:
-- Single run stuff/basic functionality
-  - ~~add CPU/Memory function~~
-  - add copy paste stuff https://stackoverflow.com/questions/5130968/how-can-i-copy-the-output-of-a-command-directly-into-my-clipboard
-    - MacOS - pbcopy pbpaste
-    - Linux - xclip BUT NOT INSTALLED ON A LOT OF SYSTEMS, SO BEST TO AVOID.
-  - add `sed` command stuff to extract folder from end of pwd command
+TO DO : 
+- installing docker + rootless/best practice
+- cronjob on docker and processes etc
+- postgres with docker + health checks
+- airflow+ celery checks etc + UI up and down + memory allocation
+- Let new users use the same .zshrc set up and plugins etc
 
-  - add ssh file transfer and s3 bucket push etc (or a git repo/google sheet?)
-- Monitoring
-  - add jupyter notebook to analyse outputs
-  - add google sheet results
-  - Connect to google data studio
-- Automated/multi-run
-  - add cronjob to run this frequently
-- Advanced stuff
-  - ~~add support for docker containers/processes inside/ etc~~
-  - add support for airflow containers/workers/processes/dagruns inside /db connection/port monitoring etc
-  - Database monitoring/ DB health
-  - AWS monitoring/health/capacity/utilisation / efficiency + cost 
-  - automate email daily from gsheets
-  - set up alert for strange/unusual activity
-  - Identify/call-out problem processes that are causing the issues (eg specific dags)
- 
-# Author
+# Contact
 George Goldberg (2021)
