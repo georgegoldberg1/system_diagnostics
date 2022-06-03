@@ -40,6 +40,7 @@ Host vm_ubuntu
 Now set up the colour theme, highlighting and plugins that will make life in the terminal far easier:
 1. Inside the VM, install "oh-my-zsh" following [steps](https://github.com/ohmyzsh/ohmyzsh) on GitHub:  
 `sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`  
+OR `sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`
 2. On your machine (not the VM), install the [powerline](https://github.com/powerline/fonts) fonts + set up your terminal to use one of the "Meslo" fonts.
 3. Install [powerline10k](https://github.com/romkatv/powerlevel10k#oh-my-zsh) theme:  `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k`
 4. Set ZSH_THEME in .zshrc config file to the new theme:  `sed -i 's/^ZSH_THEME=/ZSH_THEME="powerlevel10k\/powerlevel10k" #default ZSH_THEME=/g' ~/.zshrc`
