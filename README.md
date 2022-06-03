@@ -49,6 +49,7 @@ OR (on mac) `sed -ie 's/^ZSH_THEME=/ZSH_THEME="powerlevel10k\/powerlevel10k" #de
 6. Set all the plugins:  `sed -i 's/^plugins/plugins=(git aws compleat systemadmin zsh-autosuggestions zsh-syntax-highlighting) #default plugins/1' ~/.zshrc`
 7. Set colours of zsh-autosuggestions to make them stand out:  `echo ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=fg=#ffffff,bg=cyan,bold,underline >> ~/.zshrc`  
 8. Close the terminal connection and restart the VM to make sure these changes are all working. Note: the above will set up .zshrc file for the main user, but not any other users. this Needs to be sorted out still.
+9. If Vim is already (check with `vim --version`), then set up linenumbers in a .vimrc file: `echo ":set number relativenumber" >> .vimrc`
 
 ## Adding Vim (update to latest version)
 _(Follow instructions here: https://www.vim.org/git.php)_ 
