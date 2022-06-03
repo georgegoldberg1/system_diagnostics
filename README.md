@@ -43,7 +43,8 @@ Now set up the colour theme, highlighting and plugins that will make life in the
 OR `sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"`
 2. On your machine (not the VM), install the [powerline](https://github.com/powerline/fonts) fonts + set up your terminal to use one of the "Meslo" fonts.
 3. Install [powerline10k](https://github.com/romkatv/powerlevel10k#oh-my-zsh) theme:  `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k`
-4. Set ZSH_THEME in .zshrc config file to the new theme:  `sed -i 's/^ZSH_THEME=/ZSH_THEME="powerlevel10k\/powerlevel10k" #default ZSH_THEME=/g' ~/.zshrc`
+4. Set ZSH_THEME in .zshrc config file to the new theme:  `sed -i 's/^ZSH_THEME=/ZSH_THEME="powerlevel10k\/powerlevel10k" #default ZSH_THEME=/g' ~/.zshrc` 
+OR (on mac) `sed -ie 's/^ZSH_THEME=/ZSH_THEME="powerlevel10k\/powerlevel10k" #default ZSH_THEME=/g' ~/.zshrc`
 5. Download custom visual plugins: [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md) (makes text bold red when not understood, or green if found in commands list) AND [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md) (highlights suggested command completion to help you in the terminal):  `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting` and `git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions`
 6. Set all the plugins:  `sed -i 's/^plugins/plugins=(git aws compleat systemadmin zsh-autosuggestions zsh-syntax-highlighting) #default plugins/1' ~/.zshrc`
 7. Set colours of zsh-autosuggestions to make them stand out:  `echo ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE=fg=#ffffff,bg=cyan,bold,underline >> ~/.zshrc`  
